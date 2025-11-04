@@ -83,7 +83,7 @@
           </div>
           <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700 text-center">
             <div class="text-3xl mb-2">🐴</div>
-            <div class="text-2xl font-bold text-racing-gold">20</div>
+            <div class="text-2xl font-bold text-racing-gold">{{ totalHorses }}</div>
             <div class="text-sm text-gray-400">Total Horses</div>
           </div>
           <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700 text-center">
@@ -115,6 +115,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useStore } from '@/store'
 import type { HorseStanding } from '@/types'
 
 interface Props {
@@ -122,6 +123,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const store = useStore()
 
 defineEmits<{
   (e: 'new-game'): void
@@ -132,6 +134,10 @@ const champion = computed(() => props.standings[0])
 
 const totalRaces = computed(() => {
   return props.standings.reduce((sum, standing) => sum + standing.racesParticipated, 0) / 10
+})
+
+const totalHorses = computed(() => {
+  return store.getters['horses/horseCount']
 })
 
 function getPositionSuffix(position: number): string {
