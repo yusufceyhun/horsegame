@@ -7,7 +7,9 @@ import type { Module } from 'vuex'
 import type { Horse } from '@/types'
 import type { RootState } from './index'
 import {
+  MIN_HORSES,
   MAX_HORSES,
+  MIN_HORSES_FOR_RACE,
   HORSE_NAMES,
   HORSE_COLORS,
   MIN_CONDITION,
@@ -59,7 +61,21 @@ const horsesModule: Module<HorsesState, RootState> = {
      * Check if horses have been generated
      */
     hasHorses: (state): boolean => {
-      return state.horses.length === MAX_HORSES
+      return state.horses.length >= MIN_HORSES && state.horses.length <= MAX_HORSES
+    },
+
+    /**
+     * Check if there are enough horses to start a race
+     */
+    hasEnoughHorsesForRace: (state): boolean => {
+      return state.horses.length >= MIN_HORSES_FOR_RACE
+    },
+
+    /**
+     * Get the count of generated horses
+     */
+    horseCount: (state): number => {
+      return state.horses.length
     },
 
     /**
@@ -92,12 +108,20 @@ const horsesModule: Module<HorsesState, RootState> = {
 
   actions: {
     /**
-     * Generate 20 unique horses with random conditions
+     * Generate random number of horses (1-20) with random conditions
      */
     generateHorses({ commit }) {
-      const horses: Horse[] = HORSE_NAMES.map((name, index) => ({
-        id: String(index), // Simple incrementing IDs: "0", "1", "2", etc.
-        name,
+      // Generate random count between MIN_HORSES and MAX_HORSES
+      const horseCount = Math.floor(Math.random() * (MAX_HORSES - MIN_HORSES + 1)) + MIN_HORSES
+      
+      // Shuffle the horse names and colors to get random selection
+      const shuffledIndices = Array.from({ length: HORSE_NAMES.length }, (_, i) => i)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, horseCount)
+      
+      const horses: Horse[] = shuffledIndices.map((index, newIndex) => ({
+        id: String(newIndex), // Simple incrementing IDs: "0", "1", "2", etc.
+        name: HORSE_NAMES[index],
         color: HORSE_COLORS[index],
         condition: Math.floor(Math.random() * 100) + 1, // 1-100
       }))

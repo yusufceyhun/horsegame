@@ -4,7 +4,7 @@ import horsesModule from '../horses'
 import racesModule from '../races'
 import resultsModule from '../results'
 import type { RootState } from '../index'
-import { MAX_HORSES } from '@/utils/constants'
+import { MIN_HORSES, MAX_HORSES, MIN_HORSES_FOR_RACE } from '@/utils/constants'
 
 describe('Horses Store', () => {
   let store: Store<RootState>
@@ -20,30 +20,32 @@ describe('Horses Store', () => {
   })
 
   describe('generateHorses', () => {
-    it('should generate exactly 20 horses', async () => {
+    it('should generate between 1 and 20 horses', async () => {
       await store.dispatch('horses/generateHorses')
-      expect(store.state.horses.horses.length).toBe(MAX_HORSES)
+      const horseCount = store.state.horses.horses.length
+      expect(horseCount).toBeGreaterThanOrEqual(MIN_HORSES)
+      expect(horseCount).toBeLessThanOrEqual(MAX_HORSES)
     })
 
     it('should generate horses with unique IDs', async () => {
       await store.dispatch('horses/generateHorses')
       const ids = store.state.horses.horses.map((h) => h.id)
       const uniqueIds = new Set(ids)
-      expect(uniqueIds.size).toBe(MAX_HORSES)
+      expect(uniqueIds.size).toBe(store.state.horses.horses.length)
     })
 
     it('should generate horses with unique names', async () => {
       await store.dispatch('horses/generateHorses')
       const names = store.state.horses.horses.map((h) => h.name)
       const uniqueNames = new Set(names)
-      expect(uniqueNames.size).toBe(MAX_HORSES)
+      expect(uniqueNames.size).toBe(store.state.horses.horses.length)
     })
 
     it('should generate horses with unique colors', async () => {
       await store.dispatch('horses/generateHorses')
       const colors = store.state.horses.horses.map((h) => h.color)
       const uniqueColors = new Set(colors)
-      expect(uniqueColors.size).toBe(MAX_HORSES)
+      expect(uniqueColors.size).toBe(store.state.horses.horses.length)
     })
 
     it('should generate horses with condition between 1-100', async () => {
@@ -57,13 +59,27 @@ describe('Horses Store', () => {
 
   describe('selectRandomHorses', () => {
     it('should select correct number of horses', async () => {
-      await store.dispatch('horses/generateHorses')
+      // Keep generating until we have at least 10 horses
+      let attempts = 0
+      while (store.state.horses.horses.length < 10 && attempts < 20) {
+        await store.dispatch('horses/generateHorses')
+        attempts++
+      }
+      
+      expect(store.state.horses.horses.length).toBeGreaterThanOrEqual(10)
       const selected = (await store.dispatch('horses/selectRandomHorses', 10)) as any[]
       expect(selected.length).toBe(10)
     })
 
     it('should not select duplicate horses', async () => {
-      await store.dispatch('horses/generateHorses')
+      // Keep generating until we have at least 10 horses
+      let attempts = 0
+      while (store.state.horses.horses.length < 10 && attempts < 20) {
+        await store.dispatch('horses/generateHorses')
+        attempts++
+      }
+      
+      expect(store.state.horses.horses.length).toBeGreaterThanOrEqual(10)
       const selected = (await store.dispatch('horses/selectRandomHorses', 10)) as any[]
       const ids = selected.map((h) => h.id)
       const uniqueIds = new Set(ids)
@@ -72,8 +88,9 @@ describe('Horses Store', () => {
 
     it('should throw error if count exceeds available horses', async () => {
       await store.dispatch('horses/generateHorses')
+      const horseCount = store.state.horses.horses.length
       await expect(async () => {
-        await store.dispatch('horses/selectRandomHorses', 25)
+        await store.dispatch('horses/selectRandomHorses', horseCount + 5)
       }).rejects.toThrow()
     })
   })
@@ -90,6 +107,25 @@ describe('Horses Store', () => {
       expect(store.getters['horses/hasHorses']).toBe(false)
       await store.dispatch('horses/generateHorses')
       expect(store.getters['horses/hasHorses']).toBe(true)
+    })
+
+    it('hasEnoughHorsesForRace should return true when >= 10 horses', async () => {
+      // Keep generating until we have at least 10 horses
+      let attempts = 0
+      while (store.state.horses.horses.length < MIN_HORSES_FOR_RACE && attempts < 20) {
+        await store.dispatch('horses/generateHorses')
+        attempts++
+      }
+      
+      if (store.state.horses.horses.length >= MIN_HORSES_FOR_RACE) {
+        expect(store.getters['horses/hasEnoughHorsesForRace']).toBe(true)
+      }
+    })
+
+    it('horseCount should return correct count', async () => {
+      expect(store.getters['horses/horseCount']).toBe(0)
+      await store.dispatch('horses/generateHorses')
+      expect(store.getters['horses/horseCount']).toBe(store.state.horses.horses.length)
     })
   })
 

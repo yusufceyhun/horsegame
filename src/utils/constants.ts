@@ -2,7 +2,11 @@
  * Application constants
  */
 
+// Horse generation range
+export const MIN_HORSES = 1
 export const MAX_HORSES = 20
+export const MIN_HORSES_FOR_RACE = 10 // Minimum horses required to start a race
+
 export const HORSES_PER_RACE = 10
 export const TOTAL_ROUNDS = 6
 

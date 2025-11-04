@@ -1,5 +1,10 @@
 <template>
   <div class="card">
+    <!-- Error/Warning Message -->
+    <div v-if="errorMessage" class="mb-4 p-4 bg-red-900/50 border border-red-500 rounded-lg">
+      <p class="text-red-200 font-semibold">⚠️ {{ errorMessage }}</p>
+    </div>
+
     <div class="flex flex-col md:flex-row items-center justify-between gap-4">
       <div>
         <h2 class="text-2xl font-bold mb-2">🏇 Horse Racing Game</h2>
@@ -50,9 +55,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from '@/store'
 import { RaceState } from '@/types'
+import { MIN_HORSES_FOR_RACE } from '@/utils/constants'
 
 const emit = defineEmits<{
   generateSchedule: []
@@ -60,6 +66,7 @@ const emit = defineEmits<{
 }>()
 
 const store = useStore()
+const errorMessage = ref<string>('')
 
 const schedule = computed(() => store.getters['races/schedule'])
 const currentRoundIndex = computed(() => store.getters['races/currentRoundIndex'])
@@ -67,6 +74,8 @@ const raceState = computed(() => store.getters['races/raceState'])
 const isRaceInProgress = computed(() => store.getters['races/isRaceInProgress'])
 const allRacesCompleted = computed(() => store.getters['races/allRacesCompleted'])
 const completedRounds = computed(() => store.getters['races/completedRounds'])
+const horseCount = computed(() => store.getters['horses/horseCount'])
+const hasEnoughHorses = computed(() => store.getters['horses/hasEnoughHorsesForRace'])
 
 const isGenerateDisabled = computed(() => {
   return isRaceInProgress.value || raceState.value === RaceState.SCHEDULE_READY
@@ -110,11 +119,23 @@ const progressPercentage = computed(() => {
   return total > 0 ? (completed / total) * 100 : 0
 })
 
-function handleGenerateSchedule() {
-  store.dispatch('horses/generateHorses')
-  store.dispatch('races/generateSchedule')
-  store.dispatch('results/clearResults')
-  emit('generateSchedule')
+async function handleGenerateSchedule() {
+  try {
+    errorMessage.value = ''
+    await store.dispatch('horses/generateHorses')
+    
+    // Check if we have enough horses
+    if (!hasEnoughHorses.value) {
+      errorMessage.value = `Only ${horseCount.value} horse(s) generated. At least ${MIN_HORSES_FOR_RACE} horses are required to start a race. Please click "Generate Schedule" again.`
+      return
+    }
+    
+    await store.dispatch('races/generateSchedule')
+    await store.dispatch('results/clearResults')
+    emit('generateSchedule')
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Failed to generate schedule'
+  }
 }
 
 function handleStartRace() {

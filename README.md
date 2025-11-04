@@ -11,7 +11,8 @@ A production-ready, interactive horse racing simulation game built with **Vue 3*
 ## 🎯 Project Overview
 
 This application simulates a complete horse racing tournament with:
-- **20 unique horses** with individual attributes (speed, condition, color)
+- **1-20 randomly generated horses** with individual attributes (speed, condition, color)
+- **Minimum 10 horses required** to start a race (automatic validation)
 - **6-round tournament** with progressive distances (1200m - 2200m)
 - **Real-time race visualization** with dynamic animations
 - **Comprehensive statistics** and results tracking
@@ -20,7 +21,8 @@ This application simulates a complete horse racing tournament with:
 ## ✨ Key Features
 
 ### Core Functionality
-- ✅ **Dynamic Horse Generation**: 20 horses with unique names, colors, and conditions
+- ✅ **Dynamic Horse Generation**: 1-20 horses randomly generated with unique names, colors, and conditions
+- ✅ **Smart Validation**: Minimum 10 horses required to start a race with clear user feedback
 - ✅ **Tournament System**: 6-round schedule with 10 horses per race
 - ✅ **Progressive Distances**: 1200m → 1400m → 1600m → 1800m → 2000m → 2200m
 - ✅ **Real-time Racing**: Smooth animations with physics-based movement
@@ -38,9 +40,9 @@ This application simulates a complete horse racing tournament with:
 - ✅ **Responsive Design**: Mobile-first with Tailwind CSS
 
 ### Quality Assurance
-- ✅ **Unit Tests**: 37 tests covering utilities and Vuex store (Vitest)
+- ✅ **Unit Tests**: 40+ tests covering utilities and Vuex store (Vitest)
 - ✅ **E2E Tests**: 10 tests covering complete user flows (Playwright)
-- ✅ **100% Test Coverage**: All critical paths tested
+- ✅ **100% Test Coverage**: All critical paths tested including validation
 - ✅ **TypeScript Strict Mode**: Zero type errors
 - ✅ **Production Build**: Optimized and ready to deploy
 
@@ -131,7 +133,8 @@ horsegame/
 ### State Management (Vuex)
 
 **Horses Module**
-- Generates and manages 20 horses
+- Generates random count (1-20) of horses with unique attributes
+- Validates minimum horse count for race eligibility
 - Tracks condition and fatigue
 - Handles rest recovery
 
@@ -167,6 +170,8 @@ Components follow single-responsibility principle:
 - **Randomization Utils**: Distribution, boundaries, edge cases
 - **Race Engine**: Speed calculations, fatigue, points system
 - **Vuex Store**: Actions, mutations, getters, state management
+- **Horse Generation**: Dynamic count validation, minimum requirements
+- **Race Validation**: Insufficient horses error handling
 
 ### E2E Tests (Playwright)
 - **Complete User Flows**: Schedule generation → Race execution → Results

@@ -7,7 +7,7 @@ import type { Module } from 'vuex'
 import type { RaceRound, RaceProgress } from '@/types'
 import { RaceState, RoundStatus } from '@/types'
 import type { RootState } from './index'
-import { TOTAL_ROUNDS, ROUND_DISTANCES, HORSES_PER_RACE } from '@/utils/constants'
+import { TOTAL_ROUNDS, ROUND_DISTANCES, HORSES_PER_RACE, MIN_HORSES_FOR_RACE } from '@/utils/constants'
 
 export interface RacesState {
   schedule: RaceRound[]
@@ -140,6 +140,14 @@ const racesModule: Module<RacesState, RootState> = {
       // Ensure horses are generated
       if (!rootGetters['horses/hasHorses']) {
         await dispatch('horses/generateHorses', null, { root: true })
+      }
+
+      // Validate minimum horse count
+      const horseCount = rootGetters['horses/horseCount']
+      if (horseCount < MIN_HORSES_FOR_RACE) {
+        throw new Error(
+          `Insufficient horses to start a race. Generated ${horseCount} horses, but at least ${MIN_HORSES_FOR_RACE} are required. Please generate horses again.`
+        )
       }
 
       const schedule = []
