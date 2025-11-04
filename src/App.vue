@@ -69,6 +69,16 @@
         <p class="mt-2">
           © {{ new Date().getFullYear() }} - Professional Frontend Assessment Project
         </p>
+        <p class="mt-4">
+          <a 
+            href="https://www.linkedin.com/in/yusufceyhunvarlibas/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="text-racing-gold hover:text-yellow-500 transition-colors"
+          >
+            Connect with me on LinkedIn
+          </a>
+        </p>
       </footer>
     </div>
 
