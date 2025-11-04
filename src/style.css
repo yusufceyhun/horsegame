@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-900 text-gray-100;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-racing-gold text-gray-900 font-semibold rounded-lg 
+           hover:bg-yellow-500 transition-colors disabled:opacity-50 
+           disabled:cursor-not-allowed shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-gray-700 text-gray-100 font-semibold rounded-lg 
+           hover:bg-gray-600 transition-colors disabled:opacity-50 
+           disabled:cursor-not-allowed shadow-lg;
+  }
+
+  .card {
+    @apply bg-gray-800 rounded-lg shadow-xl p-6 border border-gray-700;
+  }
+
+  .badge-gold {
+    @apply inline-flex items-center justify-center w-8 h-8 bg-yellow-500 
+           text-gray-900 font-bold rounded-full;
+  }
+
+  .badge-silver {
+    @apply inline-flex items-center justify-center w-8 h-8 bg-gray-400 
+           text-gray-900 font-bold rounded-full;
+  }
+
+  .badge-bronze {
+    @apply inline-flex items-center justify-center w-8 h-8 bg-orange-600 
+           text-white font-bold rounded-full;
+  }
+
+  .track-lane {
+    @apply relative h-16 bg-gradient-to-r from-green-900 to-green-800 
+           border-b-2 border-green-700 overflow-hidden;
+  }
+
+  .horse-runner {
+    @apply absolute left-0 top-1/2 -translate-y-1/2 
+           transition-all duration-100 ease-linear;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Pulse animation for live elements */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Shake animation for excitement */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Bounce in animation for finish badges */
+@keyframes bounce-in {
+  0% {
+    transform: translateY(-50%) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-50%) scale(1.1);
+  }
+  100% {
+    transform: translateY(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.5s ease-out;
+}
