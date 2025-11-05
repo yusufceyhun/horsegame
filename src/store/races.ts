@@ -4,7 +4,7 @@
  */
 
 import type { Module } from 'vuex'
-import type { RaceRound, RaceProgress } from '@/types'
+import type { RaceRound, RaceProgress, RaceResult, Horse } from '@/types'
 import { RaceState, RoundStatus } from '@/types'
 import type { RootState } from './index'
 import { TOTAL_ROUNDS, ROUND_DISTANCES, HORSES_PER_RACE, MIN_HORSES_FOR_RACE } from '@/utils/constants'
@@ -138,7 +138,7 @@ const racesModule: Module<RacesState, RootState> = {
       }
     },
 
-    SET_ROUND_RESULTS(state, { index, results }: { index: number; results: any[] }) {
+    SET_ROUND_RESULTS(state, { index, results }: { index: number; results: RaceResult[] }) {
       if (state.schedule[index]) {
         state.schedule[index].results = results
       }
@@ -229,7 +229,7 @@ const racesModule: Module<RacesState, RootState> = {
 
       // Initialize progress tracking for each horse
       commit('CLEAR_RACE_PROGRESS')
-      currentRound.participants.forEach((horse: any) => {
+      currentRound.participants.forEach((horse: Horse) => {
         commit('SET_RACE_PROGRESS', {
           horseId: horse.id,
           progress: {

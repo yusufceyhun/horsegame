@@ -1,7 +1,9 @@
 <template>
   <div class="card">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-xl font-bold">Round {{ roundNumber }} Results</h3>
+      <h3 class="text-xl font-bold">
+        Round {{ roundNumber }} Results
+      </h3>
       <span class="text-gray-400">{{ distance }}m</span>
     </div>
 
@@ -18,7 +20,10 @@
       >
         <div class="flex items-center gap-4">
           <span class="text-2xl font-bold w-8">{{ getPositionBadge(result.position) }}</span>
-          <div class="w-6 h-6 rounded-full" :style="{ backgroundColor: getHorseColor(result.horseId) }" />
+          <div
+            class="w-6 h-6 rounded-full"
+            :style="{ backgroundColor: getHorseColor(result.horseId) }"
+          />
           <span class="font-semibold">{{ getHorseName(result.horseId) }}</span>
         </div>
         <div class="flex items-center gap-6 text-sm">

@@ -12,12 +12,17 @@
       </header>
 
       <!-- Game Controls -->
-      <GameControls @generate-schedule="onGenerateSchedule" @start-race="onStartRace" />
+      <GameControls
+        @generate-schedule="onGenerateSchedule"
+        @start-race="onStartRace"
+      />
 
       <!-- Race Track with Speed Control and Timer -->
       <div class="card">
         <div class="flex flex-col md:flex-row md:items-stretch justify-between mb-4 gap-4">
-          <h2 class="text-2xl font-bold">🏁 Race Track</h2>
+          <h2 class="text-2xl font-bold">
+            🏁 Race Track
+          </h2>
           <div class="flex items-stretch gap-4 flex-wrap">
             <RaceTimer 
               v-if="raceSimulation.isRunning.value" 

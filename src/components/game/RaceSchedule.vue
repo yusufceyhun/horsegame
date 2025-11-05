@@ -1,12 +1,20 @@
 <template>
   <div class="card">
-    <h2 class="text-2xl font-bold mb-6">📅 Race Schedule</h2>
+    <h2 class="text-2xl font-bold mb-6">
+      📅 Race Schedule
+    </h2>
 
-    <div v-if="schedule.length === 0" class="text-center text-gray-400 py-8">
+    <div
+      v-if="schedule.length === 0"
+      class="text-center text-gray-400 py-8"
+    >
       No schedule generated. Click "Generate Schedule" to create the race lineup.
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div
+      v-else
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+    >
       <RaceRoundCard
         v-for="round in schedule"
         :key="round.roundNumber"

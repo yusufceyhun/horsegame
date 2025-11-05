@@ -15,8 +15,12 @@
     
     <!-- Horse Info -->
     <div class="flex-1 min-w-0">
-      <h3 class="font-bold text-base truncate">{{ horse.name }}</h3>
-      <p class="text-xs text-gray-500">ID: {{ horse.id }}</p>
+      <h3 class="font-bold text-base truncate">
+        {{ horse.name }}
+      </h3>
+      <p class="text-xs text-gray-500">
+        ID: {{ horse.id }}
+      </p>
     </div>
     
     <!-- Condition Badge -->
@@ -31,7 +35,9 @@
       >
         {{ horse.condition }}
       </div>
-      <div class="text-xs text-gray-500">condition</div>
+      <div class="text-xs text-gray-500">
+        condition
+      </div>
     </div>
   </div>
 </template>

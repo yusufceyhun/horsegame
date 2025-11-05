@@ -7,11 +7,11 @@
 
     <!-- Track Markings - Dotted line -->
     <div class="absolute inset-0 flex items-center px-4">
-      <div class="w-full border-t-2 border-dashed border-gray-600/50"></div>
+      <div class="w-full border-t-2 border-dashed border-gray-600/50" />
     </div>
 
     <!-- Finish Line Indicator -->
-    <div class="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-racing-gold via-yellow-500 to-racing-gold"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-racing-gold via-yellow-500 to-racing-gold" />
 
     <!-- Horse Runner (slot content) -->
     <slot />

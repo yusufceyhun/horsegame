@@ -5,20 +5,38 @@
       Overall Standings
     </h3>
 
-    <div v-if="standings.length === 0" class="text-center text-gray-400 py-8">
+    <div
+      v-if="standings.length === 0"
+      class="text-center text-gray-400 py-8"
+    >
       No results yet. Complete races to see standings!
     </div>
 
-    <div v-else class="overflow-x-auto">
+    <div
+      v-else
+      class="overflow-x-auto"
+    >
       <table class="w-full">
         <thead class="bg-gray-700">
           <tr>
-            <th class="px-4 py-3 text-left">Rank</th>
-            <th class="px-4 py-3 text-left">Horse</th>
-            <th class="px-4 py-3 text-center">Races</th>
-            <th class="px-4 py-3 text-center">Points</th>
-            <th class="px-4 py-3 text-center">Best</th>
-            <th class="px-4 py-3 text-center">Avg Position</th>
+            <th class="px-4 py-3 text-left">
+              Rank
+            </th>
+            <th class="px-4 py-3 text-left">
+              Horse
+            </th>
+            <th class="px-4 py-3 text-center">
+              Races
+            </th>
+            <th class="px-4 py-3 text-center">
+              Points
+            </th>
+            <th class="px-4 py-3 text-center">
+              Best
+            </th>
+            <th class="px-4 py-3 text-center">
+              Avg Position
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -37,18 +55,25 @@
             </td>
             <td class="px-4 py-3">
               <div class="flex items-center gap-3">
-                <div class="w-6 h-6 rounded-full" :style="{ backgroundColor: standing.horseColor }" />
+                <div
+                  class="w-6 h-6 rounded-full"
+                  :style="{ backgroundColor: standing.horseColor }"
+                />
                 <span class="font-semibold">{{ standing.horseName }}</span>
               </div>
             </td>
-            <td class="px-4 py-3 text-center">{{ standing.racesParticipated }}</td>
+            <td class="px-4 py-3 text-center">
+              {{ standing.racesParticipated }}
+            </td>
             <td class="px-4 py-3 text-center">
               <span class="font-bold text-racing-gold">{{ standing.totalPoints }}</span>
             </td>
             <td class="px-4 py-3 text-center">
               <span class="text-green-400">{{ standing.bestPosition }}</span>
             </td>
-            <td class="px-4 py-3 text-center">{{ standing.averagePosition.toFixed(1) }}</td>
+            <td class="px-4 py-3 text-center">
+              {{ standing.averagePosition.toFixed(1) }}
+            </td>
           </tr>
         </tbody>
       </table>

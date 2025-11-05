@@ -1,5 +1,8 @@
 <template>
-  <div v-if="recentAchievements.length > 0" class="fixed top-20 right-4 z-50 space-y-2">
+  <div
+    v-if="recentAchievements.length > 0"
+    class="fixed top-20 right-4 z-50 space-y-2"
+  >
     <TransitionGroup name="achievement">
       <div
         v-for="achievement in recentAchievements"
@@ -9,8 +12,12 @@
         <div class="flex items-center gap-3 bg-gradient-to-r from-yellow-600 to-orange-600 text-white rounded-lg p-4 shadow-2xl border-2 border-yellow-400">
           <span class="text-3xl">{{ achievement.icon }}</span>
           <div>
-            <div class="font-bold text-sm">Achievement Unlocked!</div>
-            <div class="text-xs opacity-90">{{ achievement.name }}</div>
+            <div class="font-bold text-sm">
+              Achievement Unlocked!
+            </div>
+            <div class="text-xs opacity-90">
+              {{ achievement.name }}
+            </div>
           </div>
         </div>
       </div>
@@ -18,23 +25,37 @@
   </div>
 
   <!-- Combo Multiplier -->
-  <div v-if="comboMultiplier > 1" class="fixed bottom-24 right-4 z-50">
+  <div
+    v-if="comboMultiplier > 1"
+    class="fixed bottom-24 right-4 z-50"
+  >
     <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full px-6 py-3 shadow-2xl border-2 border-purple-400 animate-pulse">
       <div class="text-center">
-        <div class="text-2xl font-bold">{{ comboMultiplier }}x</div>
-        <div class="text-xs">COMBO!</div>
+        <div class="text-2xl font-bold">
+          {{ comboMultiplier }}x
+        </div>
+        <div class="text-xs">
+          COMBO!
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Streak Indicator -->
-  <div v-if="currentStreak > 0" class="fixed bottom-4 right-4 z-50">
+  <div
+    v-if="currentStreak > 0"
+    class="fixed bottom-4 right-4 z-50"
+  >
     <div class="bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg px-4 py-2 shadow-2xl border-2 border-orange-400">
       <div class="flex items-center gap-2">
         <span class="text-xl">🔥</span>
         <div>
-          <div class="text-xs font-semibold">Win Streak</div>
-          <div class="text-lg font-bold">{{ currentStreak }}</div>
+          <div class="text-xs font-semibold">
+            Win Streak
+          </div>
+          <div class="text-lg font-bold">
+            {{ currentStreak }}
+          </div>
         </div>
       </div>
     </div>

@@ -1,10 +1,10 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 
 /**
  * Helper function to generate horses until we have at least 10
  * Since horses are randomly generated (1-20), we may need multiple attempts
  */
-async function generateScheduleWithEnoughHorses(page: any, maxAttempts = 10) {
+async function generateScheduleWithEnoughHorses(page: Page, maxAttempts = 10) {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     await page.getByRole('button', { name: 'Generate Schedule' }).click()
     
@@ -35,7 +35,6 @@ test.describe('Horse Racing Game - Complete Flow', () => {
   test('should handle insufficient horses with retry', async ({ page }) => {
     // This test verifies that the system handles cases where < 10 horses are generated
     // and allows the user to regenerate
-    let foundError = false
     
     for (let attempt = 0; attempt < 5; attempt++) {
       // Check if button is enabled before clicking
@@ -51,7 +50,6 @@ test.describe('Horse Racing Game - Complete Flow', () => {
       const errorVisible = await page.locator('text=At least 10 horses are required').isVisible().catch(() => false)
       
       if (errorVisible) {
-        foundError = true
         // Verify error message is displayed
         await expect(page.locator('text=At least 10 horses are required')).toBeVisible()
         // Verify Generate Schedule button is still enabled for retry

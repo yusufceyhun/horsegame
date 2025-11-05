@@ -9,8 +9,12 @@
   >
     <div class="flex items-center justify-between mb-4">
       <div>
-        <h3 class="text-xl font-bold">Round {{ round.roundNumber }}</h3>
-        <p class="text-gray-400">{{ round.distance }}m</p>
+        <h3 class="text-xl font-bold">
+          Round {{ round.roundNumber }}
+        </h3>
+        <p class="text-gray-400">
+          {{ round.distance }}m
+        </p>
       </div>
       <div>
         <span
@@ -23,21 +27,31 @@
     </div>
 
     <div class="space-y-2">
-      <div class="text-sm text-gray-400 mb-2">Participants:</div>
+      <div class="text-sm text-gray-400 mb-2">
+        Participants:
+      </div>
       <div class="flex flex-wrap gap-2">
         <div
           v-for="horse in round.participants"
           :key="horse.id"
           class="flex items-center gap-2 bg-gray-700 px-3 py-1 rounded-full text-sm"
         >
-          <div class="w-4 h-4 rounded-full" :style="{ backgroundColor: horse.color }" />
+          <div
+            class="w-4 h-4 rounded-full"
+            :style="{ backgroundColor: horse.color }"
+          />
           <span>{{ horse.name }}</span>
         </div>
       </div>
     </div>
 
-    <div v-if="round.results.length > 0" class="mt-4 pt-4 border-t border-gray-700">
-      <div class="text-sm text-gray-400 mb-2">Results:</div>
+    <div
+      v-if="round.results.length > 0"
+      class="mt-4 pt-4 border-t border-gray-700"
+    >
+      <div class="text-sm text-gray-400 mb-2">
+        Results:
+      </div>
       <div class="space-y-1">
         <div
           v-for="result in round.results.slice(0, 3)"

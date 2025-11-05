@@ -4,6 +4,7 @@ import horsesModule from '../horses'
 import racesModule from '../races'
 import resultsModule from '../results'
 import type { RootState } from '../index'
+import type { RaceRound } from '@/types'
 import { MIN_HORSES_FOR_RACE } from '@/utils/constants'
 import { RaceState } from '@/types'
 
@@ -62,8 +63,8 @@ describe('Races Store', () => {
 
       if (store.getters['horses/horseCount'] >= MIN_HORSES_FOR_RACE) {
         await store.dispatch('races/generateSchedule')
-        const schedule = store.getters['races/schedule']
-        schedule.forEach((round: any, index: number) => {
+        const schedule: RaceRound[] = store.getters['races/schedule']
+        schedule.forEach((round, index) => {
           expect(round.roundNumber).toBe(index + 1)
         })
       }
@@ -80,8 +81,8 @@ describe('Races Store', () => {
       if (store.getters['horses/horseCount'] >= MIN_HORSES_FOR_RACE) {
         await store.dispatch('races/generateSchedule')
         const expectedDistances = [1200, 1400, 1600, 1800, 2000, 2200]
-        const schedule = store.getters['races/schedule']
-        schedule.forEach((round: any, index: number) => {
+        const schedule: RaceRound[] = store.getters['races/schedule']
+        schedule.forEach((round, index) => {
           expect(round.distance).toBe(expectedDistances[index])
         })
       }
@@ -97,8 +98,8 @@ describe('Races Store', () => {
 
       if (store.getters['horses/horseCount'] >= MIN_HORSES_FOR_RACE) {
         await store.dispatch('races/generateSchedule')
-        const schedule = store.getters['races/schedule']
-        schedule.forEach((round: any) => {
+        const schedule: RaceRound[] = store.getters['races/schedule']
+        schedule.forEach((round) => {
           expect(round.participants.length).toBe(10)
         })
       }

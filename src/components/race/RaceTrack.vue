@@ -1,11 +1,21 @@
 <template>
   <div>
-    <div v-if="currentRound" class="mb-4 text-center md:text-left">
-      <div class="text-sm text-gray-400">Round {{ currentRound.roundNumber }} of 6</div>
-      <div class="text-lg font-semibold">{{ currentRound.distance }}m Race</div>
+    <div
+      v-if="currentRound"
+      class="mb-4 text-center md:text-left"
+    >
+      <div class="text-sm text-gray-400">
+        Round {{ currentRound.roundNumber }} of 6
+      </div>
+      <div class="text-lg font-semibold">
+        {{ currentRound.distance }}m Race
+      </div>
     </div>
 
-    <div v-if="currentRound" class="space-y-2 bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 overflow-x-auto shadow-2xl">
+    <div
+      v-if="currentRound"
+      class="space-y-2 bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 overflow-x-auto shadow-2xl"
+    >
       <TrackLane
         v-for="(horse, index) in currentRound.participants"
         :key="horse.id"
@@ -36,12 +46,20 @@
       </TrackLane>
     </div>
 
-    <div v-else class="text-center text-gray-400 py-8 md:py-12">
-      <p class="text-base md:text-lg">No active race. Generate a schedule to begin!</p>
+    <div
+      v-else
+      class="text-center text-gray-400 py-8 md:py-12"
+    >
+      <p class="text-base md:text-lg">
+        No active race. Generate a schedule to begin!
+      </p>
     </div>
 
     <!-- Live Leaderboard during race - Mobile optimized -->
-    <div v-if="isRunning && currentRound" class="mt-4 md:mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+    <div
+      v-if="isRunning && currentRound"
+      class="mt-4 md:mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2"
+    >
       <div
         v-for="(horse, index) in getSortedHorses"
         :key="horse.id"
@@ -53,7 +71,10 @@
         }"
       >
         <span class="font-bold">{{ index + 1 }}.</span>
-        <div class="w-4 h-4 rounded-full" :style="{ backgroundColor: horse.color }" />
+        <div
+          class="w-4 h-4 rounded-full"
+          :style="{ backgroundColor: horse.color }"
+        />
         <span class="truncate">{{ horse.name }}</span>
       </div>
     </div>

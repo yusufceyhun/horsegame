@@ -4,6 +4,7 @@ import horsesModule from '../horses'
 import racesModule from '../races'
 import resultsModule from '../results'
 import type { RootState } from '../index'
+import type { Horse } from '@/types'
 import { MIN_HORSES, MAX_HORSES, MIN_HORSES_FOR_RACE } from '@/utils/constants'
 
 describe('Horses Store', () => {
@@ -29,32 +30,32 @@ describe('Horses Store', () => {
 
     it('should generate horses with unique IDs', async () => {
       await store.dispatch('horses/generateHorses')
-      const horses = store.getters['horses/horses']
-      const ids = horses.map((h: any) => h.id)
+      const horses: Horse[] = store.getters['horses/horses']
+      const ids = horses.map((h) => h.id)
       const uniqueIds = new Set(ids)
       expect(uniqueIds.size).toBe(horses.length)
     })
 
     it('should generate horses with unique names', async () => {
       await store.dispatch('horses/generateHorses')
-      const horses = store.getters['horses/horses']
-      const names = horses.map((h: any) => h.name)
+      const horses: Horse[] = store.getters['horses/horses']
+      const names = horses.map((h) => h.name)
       const uniqueNames = new Set(names)
       expect(uniqueNames.size).toBe(horses.length)
     })
 
     it('should generate horses with unique colors', async () => {
       await store.dispatch('horses/generateHorses')
-      const horses = store.getters['horses/horses']
-      const colors = horses.map((h: any) => h.color)
+      const horses: Horse[] = store.getters['horses/horses']
+      const colors = horses.map((h) => h.color)
       const uniqueColors = new Set(colors)
       expect(uniqueColors.size).toBe(horses.length)
     })
 
     it('should generate horses with condition between 1-100', async () => {
       await store.dispatch('horses/generateHorses')
-      const horses = store.getters['horses/horses']
-      horses.forEach((horse: any) => {
+      const horses: Horse[] = store.getters['horses/horses']
+      horses.forEach((horse) => {
         expect(horse.condition).toBeGreaterThanOrEqual(1)
         expect(horse.condition).toBeLessThanOrEqual(100)
       })
@@ -71,7 +72,7 @@ describe('Horses Store', () => {
       }
       
       expect(store.getters['horses/horseCount']).toBeGreaterThanOrEqual(10)
-      const selected = (await store.dispatch('horses/selectRandomHorses', 10)) as any[]
+      const selected = (await store.dispatch('horses/selectRandomHorses', 10)) as Horse[]
       expect(selected.length).toBe(10)
     })
 
@@ -84,7 +85,7 @@ describe('Horses Store', () => {
       }
       
       expect(store.getters['horses/horseCount']).toBeGreaterThanOrEqual(10)
-      const selected = (await store.dispatch('horses/selectRandomHorses', 10)) as any[]
+      const selected = (await store.dispatch('horses/selectRandomHorses', 10)) as Horse[]
       const ids = selected.map((h) => h.id)
       const uniqueIds = new Set(ids)
       expect(uniqueIds.size).toBe(10)
@@ -104,7 +105,7 @@ describe('Horses Store', () => {
       await store.dispatch('horses/generateHorses')
       const horses = store.getters['horses/horses']
       const firstHorse = horses[0]
-      const found = (store.getters['horses/getHorseById'] as (id: string) => any)(firstHorse.id)
+      const found = store.getters['horses/getHorseById'](firstHorse.id) as Horse
       expect(found).toEqual(firstHorse)
     })
 

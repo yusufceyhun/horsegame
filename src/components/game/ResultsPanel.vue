@@ -4,9 +4,14 @@
     <LeaderboardTable :standings="sortedStandings" />
 
     <!-- Round Results - Accordion Style for Better UX -->
-    <div v-if="hasResults" class="card">
+    <div
+      v-if="hasResults"
+      class="card"
+    >
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl font-bold">📊 Round Results</h2>
+        <h2 class="text-2xl font-bold">
+          📊 Round Results
+        </h2>
         <button 
           class="text-sm text-racing-gold hover:text-yellow-400 transition-colors"
           @click="toggleAllRounds"
@@ -31,13 +36,19 @@
               <span class="text-sm text-gray-400">{{ round.distance }}m</span>
               <span class="text-xs text-gray-500">{{ round.results.length }} horses</span>
             </div>
-            <span class="text-gray-400 transition-transform" :class="{ 'rotate-180': expandedRounds.has(round.roundNumber) }">
+            <span
+              class="text-gray-400 transition-transform"
+              :class="{ 'rotate-180': expandedRounds.has(round.roundNumber) }"
+            >
               ▼
             </span>
           </button>
           
           <!-- Round Results - Collapsible -->
-          <div v-if="expandedRounds.has(round.roundNumber)" class="p-4 bg-gray-900/30">
+          <div
+            v-if="expandedRounds.has(round.roundNumber)"
+            class="p-4 bg-gray-900/30"
+          >
             <RoundResult
               :round-number="round.roundNumber"
               :distance="round.distance"
@@ -50,7 +61,10 @@
 
       <!-- Export Results -->
       <div class="mt-6 pt-6 border-t border-gray-700">
-        <button class="btn-secondary w-full md:w-auto" @click="handleExport">
+        <button
+          class="btn-secondary w-full md:w-auto"
+          @click="handleExport"
+        >
           📥 Export Results as JSON
         </button>
       </div>
@@ -61,6 +75,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useStore } from '@/store'
+import type { RaceRound } from '@/types'
 import LeaderboardTable from '../results/LeaderboardTable.vue'
 import RoundResult from '../results/RoundResult.vue'
 
@@ -76,7 +91,7 @@ const expandedRounds = ref<Set<number>>(new Set())
 const allExpanded = computed(() => expandedRounds.value.size === completedRounds.value.length)
 
 // Auto-expand the latest round
-watch(completedRounds, (newRounds: any) => {
+watch(completedRounds, (newRounds: RaceRound[]) => {
   if (newRounds.length > 0) {
     const latestRound = newRounds[newRounds.length - 1]
     expandedRounds.value.add(latestRound.roundNumber)
@@ -97,7 +112,7 @@ function toggleAllRounds() {
   if (allExpanded.value) {
     expandedRounds.value.clear()
   } else {
-    expandedRounds.value = new Set(completedRounds.value.map((r: any) => r.roundNumber))
+    expandedRounds.value = new Set(completedRounds.value.map((r: RaceRound) => r.roundNumber))
   }
 }
 

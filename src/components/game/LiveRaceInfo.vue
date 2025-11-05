@@ -22,8 +22,12 @@
           <span class="text-2xl">👑</span>
           <span class="text-xs text-gray-400">Leader</span>
         </div>
-        <div class="font-bold text-racing-gold truncate">{{ leader?.name || 'N/A' }}</div>
-        <div class="text-xs text-gray-500">{{ leader ? `${leader.progress.toFixed(1)}%` : '-' }}</div>
+        <div class="font-bold text-racing-gold truncate">
+          {{ leader?.name || 'N/A' }}
+        </div>
+        <div class="text-xs text-gray-500">
+          {{ leader ? `${leader.progress.toFixed(1)}%` : '-' }}
+        </div>
       </div>
 
       <!-- Battle for 1st -->
@@ -32,8 +36,12 @@
           <span class="text-2xl">⚔️</span>
           <span class="text-xs text-gray-400">Closest Race</span>
         </div>
-        <div class="font-bold text-yellow-400 text-sm truncate">{{ closeRaceGap }}</div>
-        <div class="text-xs text-gray-500">Gap between 1st & 2nd</div>
+        <div class="font-bold text-yellow-400 text-sm truncate">
+          {{ closeRaceGap }}
+        </div>
+        <div class="text-xs text-gray-500">
+          Gap between 1st & 2nd
+        </div>
       </div>
 
       <!-- Streak Counter -->
@@ -42,8 +50,12 @@
           <span class="text-2xl">🔥</span>
           <span class="text-xs text-gray-400">Excitement</span>
         </div>
-        <div class="font-bold text-orange-400">{{ excitementLevel }}</div>
-        <div class="text-xs text-gray-500">Race intensity</div>
+        <div class="font-bold text-orange-400">
+          {{ excitementLevel }}
+        </div>
+        <div class="text-xs text-gray-500">
+          Race intensity
+        </div>
       </div>
     </div>
 
@@ -61,7 +73,10 @@
         >
           <span class="text-racing-gold">{{ event.time }}s:</span> {{ event.message }}
         </div>
-        <div v-if="liveEvents.length === 0" class="text-xs text-gray-500 italic">
+        <div
+          v-if="liveEvents.length === 0"
+          class="text-xs text-gray-500 italic"
+        >
           Race in progress...
         </div>
       </div>
@@ -71,11 +86,11 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, onUnmounted } from 'vue'
-import type { RaceProgress } from '@/types'
+import type { RaceProgress, Horse } from '@/types'
 
 interface Props {
   progressData: RaceProgress[]
-  participants: any[]
+  participants: Horse[]
   raceStartTime: number
 }
 

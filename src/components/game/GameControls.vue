@@ -1,14 +1,23 @@
 <template>
   <div class="card">
     <!-- Error/Warning Message -->
-    <div v-if="errorMessage" class="mb-4 p-4 bg-red-900/50 border border-red-500 rounded-lg">
-      <p class="text-red-200 font-semibold">⚠️ {{ errorMessage }}</p>
+    <div
+      v-if="errorMessage"
+      class="mb-4 p-4 bg-red-900/50 border border-red-500 rounded-lg"
+    >
+      <p class="text-red-200 font-semibold">
+        ⚠️ {{ errorMessage }}
+      </p>
     </div>
 
     <div class="flex flex-col md:flex-row items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-bold mb-2">🏇 Horse Racing Game</h2>
-        <p class="text-gray-400">{{ statusMessage }}</p>
+        <h2 class="text-2xl font-bold mb-2">
+          🏇 Horse Racing Game
+        </h2>
+        <p class="text-gray-400">
+          {{ statusMessage }}
+        </p>
       </div>
 
       <div class="flex gap-4">
@@ -39,7 +48,10 @@
     </div>
 
     <!-- Progress indicator -->
-    <div v-if="schedule.length > 0" class="mt-6">
+    <div
+      v-if="schedule.length > 0"
+      class="mt-6"
+    >
       <div class="flex items-center justify-between text-sm text-gray-400 mb-2">
         <span>Round Progress</span>
         <span>{{ currentRoundIndex + 1 }} / {{ schedule.length }}</span>
@@ -133,8 +145,8 @@ async function handleGenerateSchedule() {
     await store.dispatch('races/generateSchedule')
     await store.dispatch('results/clearResults')
     emit('generateSchedule')
-  } catch (error: any) {
-    errorMessage.value = error.message || 'Failed to generate schedule'
+  } catch (error: unknown) {
+    errorMessage.value = error instanceof Error ? error.message : 'Failed to generate schedule'
   }
 }
 

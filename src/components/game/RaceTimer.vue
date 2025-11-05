@@ -2,7 +2,9 @@
   <div class="flex items-center gap-3 bg-gray-800/80 backdrop-blur-sm px-4 py-3 rounded-lg border border-gray-700 h-full">
     <span class="text-2xl">⏱️</span>
     <div>
-      <div class="text-xs text-gray-400">Race Time</div>
+      <div class="text-xs text-gray-400">
+        Race Time
+      </div>
       <div class="text-xl font-mono font-bold text-racing-gold">
         {{ formattedTime }}
       </div>
