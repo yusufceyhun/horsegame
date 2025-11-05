@@ -9,6 +9,32 @@ import { RaceState, RoundStatus } from '@/types'
 import type { RootState } from './index'
 import { TOTAL_ROUNDS, ROUND_DISTANCES, HORSES_PER_RACE, MIN_HORSES_FOR_RACE } from '@/utils/constants'
 
+/**
+ * Valid state transitions for the race state machine
+ * Enforces proper lifecycle: IDLE -> SCHEDULE_READY -> RACE_IN_PROGRESS -> RACE_COMPLETED -> ...
+ */
+const VALID_TRANSITIONS: Record<RaceState, RaceState[]> = {
+  [RaceState.IDLE]: [RaceState.SCHEDULE_READY],
+  [RaceState.SCHEDULE_READY]: [RaceState.RACE_IN_PROGRESS, RaceState.IDLE],
+  [RaceState.RACE_IN_PROGRESS]: [RaceState.RACE_COMPLETED],
+  [RaceState.RACE_COMPLETED]: [RaceState.SCHEDULE_READY, RaceState.ALL_RACES_COMPLETED, RaceState.IDLE],
+  [RaceState.ALL_RACES_COMPLETED]: [RaceState.IDLE],
+}
+
+/**
+ * Validates if a state transition is allowed
+ * @throws Error if transition is invalid
+ */
+function validateStateTransition(currentState: RaceState, newState: RaceState): void {
+  const allowedTransitions = VALID_TRANSITIONS[currentState]
+  if (!allowedTransitions.includes(newState)) {
+    throw new Error(
+      `Invalid state transition: ${currentState} -> ${newState}. ` +
+      `Allowed transitions from ${currentState}: ${allowedTransitions.join(', ')}`
+    )
+  }
+}
+
 export interface RacesState {
   schedule: RaceRound[]
   currentRoundIndex: number
@@ -89,6 +115,8 @@ const racesModule: Module<RacesState, RootState> = {
     },
 
     SET_RACE_STATE(state, raceState: RaceState) {
+      // Validate transition before applying
+      validateStateTransition(state.raceState, raceState)
       state.raceState = raceState
     },
 
@@ -127,6 +155,7 @@ const racesModule: Module<RacesState, RootState> = {
     RESET_RACES(state) {
       state.schedule = []
       state.currentRoundIndex = 0
+      // Direct reset to IDLE - bypass validation for reset operation
       state.raceState = RaceState.IDLE
       state.raceProgress = {}
     },
@@ -179,8 +208,16 @@ const racesModule: Module<RacesState, RootState> = {
 
     /**
      * Start the current race
+     * @throws Error if not in SCHEDULE_READY state
      */
     startRace({ state, commit, getters }) {
+      // Guard: Can only start race from SCHEDULE_READY state
+      if (state.raceState !== RaceState.SCHEDULE_READY) {
+        throw new Error(
+          `Cannot start race from state ${state.raceState}. Must be in ${RaceState.SCHEDULE_READY} state.`
+        )
+      }
+
       const currentRound = getters.currentRound
       if (!currentRound) {
         throw new Error('No current round available')
@@ -214,8 +251,16 @@ const racesModule: Module<RacesState, RootState> = {
 
     /**
      * Complete the current round
+     * @throws Error if not in RACE_IN_PROGRESS state
      */
     completeCurrentRound({ state, commit, getters }) {
+      // Guard: Can only complete race from RACE_IN_PROGRESS state
+      if (state.raceState !== RaceState.RACE_IN_PROGRESS) {
+        throw new Error(
+          `Cannot complete race from state ${state.raceState}. Must be in ${RaceState.RACE_IN_PROGRESS} state.`
+        )
+      }
+
       const currentRound = getters.currentRound
       if (!currentRound) {
         throw new Error('No current round to complete')
@@ -233,8 +278,16 @@ const racesModule: Module<RacesState, RootState> = {
 
     /**
      * Move to next round
+     * @throws Error if not in RACE_COMPLETED state
      */
     nextRound({ state, commit }) {
+      // Guard: Can only move to next round from RACE_COMPLETED state
+      if (state.raceState !== RaceState.RACE_COMPLETED) {
+        throw new Error(
+          `Cannot move to next round from state ${state.raceState}. Must be in ${RaceState.RACE_COMPLETED} state.`
+        )
+      }
+
       if (state.currentRoundIndex < state.schedule.length - 1) {
         commit('SET_CURRENT_ROUND_INDEX', state.currentRoundIndex + 1)
         commit('SET_RACE_STATE', RaceState.SCHEDULE_READY)

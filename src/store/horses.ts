@@ -22,87 +22,103 @@ import { randomInt, selectRandom } from '@/utils/randomization'
 import { applyFatigue } from '@/utils/race-engine'
 
 export interface HorsesState {
-  horses: Horse[]
-  selectedHorses: Horse[]
+  byId: Record<string, Horse>
+  allIds: string[]
+  selectedHorseIds: string[]
 }
 
 const horsesModule: Module<HorsesState, RootState> = {
   namespaced: true,
 
   state: (): HorsesState => ({
-    horses: [],
-    selectedHorses: [],
+    byId: {},
+    allIds: [],
+    selectedHorseIds: [],
   }),
 
   getters: {
     /**
-     * Get horse by ID
+     * Get horse by ID - O(1) lookup
      */
     getHorseById: (state) => (id: string): Horse | undefined => {
-      return state.horses.find((horse) => horse.id === id)
+      return state.byId[id]
     },
 
     /**
-     * Get multiple horses by IDs
+     * Get multiple horses by IDs - O(n) where n is ids.length
      */
     getHorsesByIds: (state) => (ids: string[]): Horse[] => {
-      return state.horses.filter((horse) => ids.includes(horse.id))
+      return ids.map(id => state.byId[id]).filter(Boolean) as Horse[]
     },
 
     /**
      * Get horses not in current selection
      */
     availableHorses: (state): Horse[] => {
-      const selectedIds = new Set(state.selectedHorses.map((h: Horse) => h.id))
-      return state.horses.filter((horse) => !selectedIds.has(horse.id))
+      const selectedSet = new Set(state.selectedHorseIds)
+      return state.allIds
+        .filter(id => !selectedSet.has(id))
+        .map(id => state.byId[id])
     },
 
     /**
      * Check if horses have been generated
      */
     hasHorses: (state): boolean => {
-      return state.horses.length >= MIN_HORSES && state.horses.length <= MAX_HORSES
+      return state.allIds.length >= MIN_HORSES && state.allIds.length <= MAX_HORSES
     },
 
     /**
      * Check if there are enough horses to start a race
      */
     hasEnoughHorsesForRace: (state): boolean => {
-      return state.horses.length >= MIN_HORSES_FOR_RACE
+      return state.allIds.length >= MIN_HORSES_FOR_RACE
     },
 
     /**
      * Get the count of generated horses
      */
     horseCount: (state): number => {
-      return state.horses.length
+      return state.allIds.length
     },
 
     /**
-     * Get all horses
+     * Get all horses as array
      */
-    horses: (state): Horse[] => state.horses,
+    horses: (state): Horse[] => state.allIds.map(id => state.byId[id]),
+
+    /**
+     * Get selected horses
+     */
+    selectedHorses: (state): Horse[] => state.selectedHorseIds.map(id => state.byId[id]),
   },
 
   mutations: {
     SET_HORSES(state, horses: Horse[]) {
-      state.horses = horses
+      // Normalize horses into byId map and allIds array
+      state.byId = {}
+      state.allIds = []
+      horses.forEach(horse => {
+        state.byId[horse.id] = horse
+        state.allIds.push(horse.id)
+      })
     },
 
     SET_SELECTED_HORSES(state, horses: Horse[]) {
-      state.selectedHorses = horses
+      state.selectedHorseIds = horses.map(h => h.id)
     },
 
     UPDATE_HORSE_CONDITION(state, { id, condition }: { id: string; condition: number }) {
-      const horse = state.horses.find((h) => h.id === id)
+      const horse = state.byId[id]
       if (horse) {
         horse.condition = Math.max(MIN_CONDITION, Math.min(MAX_CONDITION, condition))
       }
     },
 
     CLEAR_HORSES(state) {
-      state.horses = []
-      state.selectedHorses = []
+      state.byId = {}
+      state.allIds = []
+      state.selectedHorseIds = []
     },
   },
 
@@ -140,12 +156,13 @@ const horsesModule: Module<HorsesState, RootState> = {
     /**
      * Select N random horses from the pool
      */
-    selectRandomHorses({ state, commit }, count: number): Horse[] {
-      if (count > state.horses.length) {
-        throw new Error(`Cannot select ${count} horses from pool of ${state.horses.length}`)
+    selectRandomHorses({ state, commit, getters }, count: number): Horse[] {
+      if (count > state.allIds.length) {
+        throw new Error(`Cannot select ${count} horses from pool of ${state.allIds.length}`)
       }
 
-      const selectedHorses = selectRandom(state.horses, count)
+      const allHorses: Horse[] = getters.horses
+      const selectedHorses = selectRandom(allHorses, count) as Horse[]
       commit('SET_SELECTED_HORSES', selectedHorses)
       return selectedHorses
     },
@@ -155,7 +172,7 @@ const horsesModule: Module<HorsesState, RootState> = {
      */
     applyFatigueToHorses({ commit, state }, horseIds: string[]) {
       horseIds.forEach((id) => {
-        const horse = state.horses.find((h) => h.id === id)
+        const horse = state.byId[id]
         if (horse) {
           const newCondition = applyFatigue(horse.condition, FATIGUE_FACTOR)
           commit('UPDATE_HORSE_CONDITION', { id, condition: newCondition })
@@ -168,7 +185,7 @@ const horsesModule: Module<HorsesState, RootState> = {
      */
     applyRestRecoveryToHorses({ commit, state }, horseIds: string[]) {
       horseIds.forEach((id) => {
-        const horse = state.horses.find((h) => h.id === id)
+        const horse = state.byId[id]
         if (horse) {
           const recovery = randomInt(REST_RECOVERY_MIN, REST_RECOVERY_MAX)
           const newCondition = Math.min(MAX_CONDITION, horse.condition + recovery)
@@ -180,8 +197,8 @@ const horsesModule: Module<HorsesState, RootState> = {
     /**
      * Reset all horses to random conditions
      */
-    resetHorses({ state, commit }) {
-      const updatedHorses = state.horses.map((horse) => ({
+    resetHorses({ commit, getters }) {
+      const updatedHorses = getters.horses.map((horse: Horse) => ({
         ...horse,
         condition: randomInt(MIN_CONDITION, MAX_CONDITION),
       }))

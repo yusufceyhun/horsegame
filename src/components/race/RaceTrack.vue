@@ -43,7 +43,7 @@
     <!-- Live Leaderboard during race - Mobile optimized -->
     <div v-if="isRunning && currentRound" class="mt-4 md:mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
       <div
-        v-for="(horse, index) in sortedHorses"
+        v-for="(horse, index) in getSortedHorses"
         :key="horse.id"
         class="flex items-center gap-2 bg-gray-700 px-3 py-2 rounded-lg text-sm"
         :class="{
@@ -61,11 +61,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useStore } from '@/store'
+import { useRaceState } from '@/composables/useRaceState'
 import TrackLane from './TrackLane.vue'
 import HorseRunner from './HorseRunner.vue'
-import type { Horse, RaceProgress } from '@/types'
 
 interface Props {
   isRunning: boolean
@@ -73,72 +71,11 @@ interface Props {
 
 defineProps<Props>()
 
-const store = useStore()
-
-const currentRound = computed(() => store.getters['races/currentRound'])
-
-function getHorseProgress(horseId: string): number {
-  const progress = store.state.races.raceProgress[horseId]
-  return progress?.progress ?? 0
-}
-
-interface FinishData {
-  finished: boolean
-  time: string
-  points: number
-}
-
-function getHorseFinishData(horseId: string): FinishData {
-  const progress = store.state.races.raceProgress[horseId]
-  
-  if (!progress || !progress.finished) {
-    return { finished: false, time: '0.00', points: 0 }
-  }
-  
-  // Prefer viewerFinishTime to match Race Timer; fallback to realElapsedTime
-  const finishMs = progress.viewerFinishTime ?? progress.realElapsedTime
-  const timeInSeconds = finishMs ? (finishMs / 1000).toFixed(2) : '0.00'
-  
-  // Calculate points based on finish order
-  // Get all finished horses and sort by real elapsed time
-  const allProgress = Object.values(store.state.races.raceProgress)
-  const finishedHorses = allProgress
-    .filter((p: RaceProgress) => p.finished && p.realElapsedTime)
-    .sort((a: RaceProgress, b: RaceProgress) => (a.realElapsedTime ?? 0) - (b.realElapsedTime ?? 0))
-  
-  // Find position of current horse
-  const position = finishedHorses.findIndex((p: RaceProgress) => p.horseId === horseId) + 1
-  
-  // Calculate points based on position (same as calculatePoints in race-engine)
-  const pointsMap: Record<number, number> = {
-    1: 10, 2: 8, 3: 6, 4: 5, 5: 4,
-    6: 3, 7: 2, 8: 1, 9: 1, 10: 1,
-  }
-  const points = pointsMap[position] || 0
-  
-  return {
-    finished: true,
-    time: timeInSeconds,
-    points
-  }
-}
-
-const sortedHorses = computed((): Horse[] => {
-  if (!currentRound.value) return []
-
-  const progressData = Object.values(store.state.races.raceProgress)
-  interface HorseWithProgress extends Horse {
-    currentProgress: number
-  }
-
-  const horsesWithProgress: HorseWithProgress[] = currentRound.value.participants.map((horse: Horse) => {
-    const progress = progressData.find((p: RaceProgress) => p.horseId === horse.id)
-    return {
-      ...horse,
-      currentProgress: progress?.progress ?? 0,
-    }
-  })
-
-  return horsesWithProgress.sort((a: HorseWithProgress, b: HorseWithProgress) => b.currentProgress - a.currentProgress)
-})
+// Use composable for decoupled, testable access to race state
+const {
+  currentRound,
+  getHorseProgress,
+  getHorseFinishData,
+  getSortedHorses,
+} = useRaceState()
 </script>
