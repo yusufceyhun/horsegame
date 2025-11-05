@@ -13,7 +13,7 @@ export interface RacesState {
   schedule: RaceRound[]
   currentRoundIndex: number
   raceState: RaceState
-  raceProgress: Map<string, RaceProgress>
+  raceProgress: Record<string, RaceProgress>
 }
 
 const racesModule: Module<RacesState, RootState> = {
@@ -23,7 +23,7 @@ const racesModule: Module<RacesState, RootState> = {
     schedule: [],
     currentRoundIndex: 0,
     raceState: RaceState.IDLE,
-    raceProgress: new Map(),
+    raceProgress: {},
   }),
 
   getters: {
@@ -117,18 +117,18 @@ const racesModule: Module<RacesState, RootState> = {
     },
 
     SET_RACE_PROGRESS(state, { horseId, progress }: { horseId: string; progress: RaceProgress }) {
-      state.raceProgress.set(horseId, progress)
+      state.raceProgress[horseId] = progress
     },
 
     CLEAR_RACE_PROGRESS(state) {
-      state.raceProgress.clear()
+      state.raceProgress = {}
     },
 
     RESET_RACES(state) {
       state.schedule = []
       state.currentRoundIndex = 0
       state.raceState = RaceState.IDLE
-      state.raceProgress.clear()
+      state.raceProgress = {}
     },
   },
 
@@ -253,14 +253,14 @@ const racesModule: Module<RacesState, RootState> = {
      * Get progress for a specific horse
      */
     getHorseProgress({ state }, horseId: string): RaceProgress | undefined {
-      return state.raceProgress.get(horseId)
+      return state.raceProgress[horseId]
     },
 
     /**
      * Get all race progress as array
      */
     getAllProgress({ state }): RaceProgress[] {
-      return Array.from(state.raceProgress.values())
+      return Object.values(state.raceProgress)
     },
   },
 }

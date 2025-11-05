@@ -78,9 +78,8 @@ const store = useStore()
 const currentRound = computed(() => store.getters['races/currentRound'])
 
 function getHorseProgress(horseId: string): number {
-  const state = store.state.races as any
-  const progress = state.raceProgress.get(horseId)
-  return progress?.progress || 0
+  const progress = store.state.races.raceProgress[horseId]
+  return progress?.progress ?? 0
 }
 
 interface FinishData {
@@ -90,8 +89,7 @@ interface FinishData {
 }
 
 function getHorseFinishData(horseId: string): FinishData {
-  const state = store.state.races as any
-  const progress = state.raceProgress.get(horseId)
+  const progress = store.state.races.raceProgress[horseId]
   
   if (!progress || !progress.finished) {
     return { finished: false, time: '0.00', points: 0 }
@@ -103,13 +101,13 @@ function getHorseFinishData(horseId: string): FinishData {
   
   // Calculate points based on finish order
   // Get all finished horses and sort by real elapsed time
-  const allProgress = Array.from(state.raceProgress.values() as any) as RaceProgress[]
+  const allProgress = Object.values(store.state.races.raceProgress)
   const finishedHorses = allProgress
-    .filter(p => p.finished && p.realElapsedTime)
-    .sort((a, b) => (a.realElapsedTime || 0) - (b.realElapsedTime || 0))
+    .filter((p: RaceProgress) => p.finished && p.realElapsedTime)
+    .sort((a: RaceProgress, b: RaceProgress) => (a.realElapsedTime ?? 0) - (b.realElapsedTime ?? 0))
   
   // Find position of current horse
-  const position = finishedHorses.findIndex(p => p.horseId === horseId) + 1
+  const position = finishedHorses.findIndex((p: RaceProgress) => p.horseId === horseId) + 1
   
   // Calculate points based on position (same as calculatePoints in race-engine)
   const pointsMap: Record<number, number> = {
@@ -128,16 +126,19 @@ function getHorseFinishData(horseId: string): FinishData {
 const sortedHorses = computed((): Horse[] => {
   if (!currentRound.value) return []
 
-  const state = store.state.races as any
-  const progressData = Array.from(state.raceProgress.values()) as RaceProgress[]
-  const horsesWithProgress = currentRound.value.participants.map((horse: Horse) => {
+  const progressData = Object.values(store.state.races.raceProgress)
+  interface HorseWithProgress extends Horse {
+    currentProgress: number
+  }
+
+  const horsesWithProgress: HorseWithProgress[] = currentRound.value.participants.map((horse: Horse) => {
     const progress = progressData.find((p: RaceProgress) => p.horseId === horse.id)
     return {
       ...horse,
-      currentProgress: progress?.progress || 0,
+      currentProgress: progress?.progress ?? 0,
     }
   })
 
-  return horsesWithProgress.sort((a: any, b: any) => b.currentProgress - a.currentProgress)
+  return horsesWithProgress.sort((a: HorseWithProgress, b: HorseWithProgress) => b.currentProgress - a.currentProgress)
 })
 </script>

@@ -25,9 +25,8 @@ export function useRaceSimulation() {
   const realElapsedMs = ref(0)
   const viewerElapsedMs = ref(0)
 
-  const currentProgress = computed(() => {
-    const state = store.state.races as any
-    return Array.from(state.raceProgress.values()) as RaceProgress[]
+  const currentProgress = computed((): RaceProgress[] => {
+    return Object.values(store.state.races.raceProgress)
   })
 
   /**
@@ -134,13 +133,12 @@ export function useRaceSimulation() {
           // Capture global timers at this exact moment
           // Use real elapsed (independent of speed) and viewer elapsed (scaled by speed)
           // Deduplicate realElapsed to avoid identical ms due to frame alignment
-          const state: any = store.state.races
-          const values = Array.from(state.raceProgress.values()) as RaceProgress[]
+          const allProgress = Object.values(store.state.races.raceProgress)
           // Track used hundredth-of-a-second buckets to avoid 64.00-style bunching
           const usedHundredths = new Set(
-            values
-              .filter((p: RaceProgress) => !!p.finished && p.realElapsedTime != null)
-              .map((p: RaceProgress) => Math.floor(((p.realElapsedTime as number) / 10)))
+            allProgress
+              .filter((p: RaceProgress) => p.finished && p.realElapsedTime != null)
+              .map((p: RaceProgress) => Math.floor((p.realElapsedTime as number) / 10))
           )
           let rt = realElapsedMs.value
           let bucket = Math.floor(rt / 10)
